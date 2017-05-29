@@ -4,7 +4,7 @@
 Поддержка: WinXP и далее.  (может быть Win2000 и даже Win98)
 Support: Windows XP or later (may be Win2000 and Win98 too)
 
-[download](https://github.com/rty65tt/stClock.scr/raw/master/stClock.scr)
+[Download](https://github.com/rty65tt/stClock.scr/raw/master/stClock.scr)
 
 ## Screenshot
 ![screensot1](https://raw.githubusercontent.com/rty65tt/stClock.scr/master/screenshot1.png  "Screenshot1")

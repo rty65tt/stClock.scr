@@ -75,7 +75,7 @@ void set_color_theme()
 	mn_color = 0x00334514;
 	d2_color = 0x00313131;
 	sc_color = 0x002c5434;
-	wd_color = 0x00c3026;
+	wd_color = 0x000c3026;
 	md_color = 0x00313131;
 	cs_color = 0x00144a24;
 	cf_color = 0x002c5434;

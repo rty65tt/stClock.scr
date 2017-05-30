@@ -228,10 +228,6 @@ void draw_symbol(HDC *hdc, RECT &l_rc, unsigned int m, int *x, int *y, COLORREF 
 
 void draw_second_circle(HDC *hdc, int m)
 {
-//	HPEN hpen;
-//	HBRUSH hbrush;
-//	HGDIOBJ hbrushOld;
-
 	double xdr, ydr;
 
 	wr = (digit_second) ? b_step * 28 : b_step * 20;
@@ -265,7 +261,6 @@ void draw_second_circle(HDC *hdc, int m)
 		}
 		++count;
 	} while (count <= m);
-
 }
 
 
@@ -354,25 +349,26 @@ LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
 		if (digit_second)
 		{
-			x_h_d1 = xh - d_ch_width * 5 + d_size * 4;
+			x_h_d1 = xh - d_ch_width * 4 - d_size * 3;
 			x_h_d2 = x_h_d1 + d_ch_width + d_size * 2;
 			x_dot1 = x_h_d2 + d_ch_width;
 			x_m_d1 = x_dot1 + d_ch_width;
-			x_m_d2 = xh + d_size * 2;
+			x_m_d2 = xh + d_size;
 			x_dot2 = x_m_d2 + d_ch_width;
 			x_s_d1 = x_dot2 + d_ch_width;
 			x_s_d2 = x_s_d1 + d_ch_width + d_size * 2;
+			x_wday = x_h_d2;
 		}
 		else
 		{
 			x_h_d1 = xh - d_ch_width * 3;
-			x_h_d2 = x_h_d1 + d_ch_width * 1.5;
-			x_dot1 = x_h_d2 + d_ch_width;
-			x_m_d1 = x_dot1 + d_ch_width;
-			x_m_d2 = x_m_d1 + d_ch_width * 1.5;
+			x_h_d2 = x_h_d1 + d_ch_width * 1.4;
+			x_dot1 = xh - d_ch_width / 2;
+			x_m_d2 = xh + d_ch_width * 2;
+			x_m_d1 = x_m_d2 - d_ch_width * 1.4;
+			x_wday = x_h_d2 - d_size * 2;
 		}
 
-		x_wday = x_h_d2 - d_size * 2;
 		x_mday1 = x_wday + b_step * 9;
 		x_mday2 = x_mday1 + b_step * 5;
 
@@ -620,7 +616,7 @@ BOOL WINAPI ScreenSaverConfigureDialog(HWND hDlg, UINT message, WPARAM wParam, L
 			//SendMessage(hDlg, WM_INITDIALOG, 0, 0);
 			break;
 		case IDC_GOGITBTN:
-			ShellExecute(hDlg, "Open", "https://github.com/", (LPCTSTR)NULL, (LPCTSTR)NULL, SW_SHOW);
+			ShellExecute(hDlg, "Open", "https://github.com/rty65tt/stClock.scr", (LPCTSTR)NULL, (LPCTSTR)NULL, SW_SHOW);
 			break;
 		case IDOK:
 			EndDialog(hDlg, LOWORD(wParam));

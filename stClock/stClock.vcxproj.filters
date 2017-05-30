@@ -39,7 +39,4 @@
       <Filter>Файлы исходного кода</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="README.md" />
-  </ItemGroup>
 </Project>

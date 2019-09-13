@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "wtypes.h"
 #include <math.h>
 #include "commdlg.h"
 #include <CommCtrl.h>
@@ -304,13 +305,15 @@ LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
 		LoadSaveSettings(FALSE);
 
-		GetClientRect(hWnd, &rc);
+//		GetClientRect(hWnd, &rc);
 
-		w_w = rc.right;
-		w_h = rc.bottom;
+//		GetWindowRect(hWnd, &rc);
+//		w_w = rc.right;
+//		w_h = rc.bottom;
 
-		//w_w = GetSystemMetrics(SM_CXSCREEN);
-		//w_h = GetSystemMetrics(SM_CYSCREEN);
+
+		w_w = GetSystemMetrics(SM_CXSCREEN);
+		w_h = GetSystemMetrics(SM_CYSCREEN);
 
 		if (fChildPreview)
 		{

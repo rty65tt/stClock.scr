@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Включаемый файл, созданный в Microsoft Visual C++.
-// Используется Resource.rc
+// Р’РєР»СЋС‡Р°РµРјС‹Р№ С„Р°Р№Р», СЃРѕР·РґР°РЅРЅС‹Р№ РІ Microsoft Visual C++.
+// РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ Resource.rc
 //
 
 #define IDS_DESCRIPTION                 1
@@ -37,6 +37,7 @@
 #define IDC_ANTIALIAS                   1027
 #define IDC_SETTHEME01BTN               1032
 #define IDC_GOGITBTN					1033
+#define IDC_STATIC                      1034
 #define DLG_SCRNSAVECONFIGURE           2003
 
 // Next default values for new objects

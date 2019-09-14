@@ -1,9 +1,9 @@
 
 # stClock: LED Station Clock Screensaver for MS Windows 
 
-Поддержка: WinXP и далее. (может быть Win2000 и даже Win98)
+Поддержка: WinXP и далее.  (может быть Win2000 и даже Win98)
 
-Support: Windows XP or later (may be Win2000 and Win98 too)
+Support: Windows XP or later  (may be Win2000 and Win98 too)
 
 [Download](https://github.com/rty65tt/stClock.scr/raw/master/stClock.scr)
 
@@ -13,5 +13,5 @@ Support: Windows XP or later (may be Win2000 and Win98 too)
 ## Options/Настройки
 ![screensot2](https://raw.githubusercontent.com/rty65tt/stClock.scr/master/screenshot2.png  "Screenshot2")
 
-(version 0.4 support dual monitor)
+(version 0.4 support dual monitor)  
 (в версии 0.4 добавлена потдержка двух мониторов)

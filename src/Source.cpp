@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <winuser.h>
 #include "wtypes.h"
 #include <math.h>
 #include "commdlg.h"
@@ -82,6 +83,17 @@ void set_color_theme()
 	cf_color = 0x002c5434;
 }
 
+	static SYSTEMTIME st;
+
+	static int w_w, w_h, d_ch_width, d_ch_height;
+	static int y_pos, ywd_pos, x_h_d1, x_h_d2, x_m_d1, x_m_d2, x_s_d1, x_s_d2, x_dot1, x_dot2, x_wday, x_mday1, x_mday2;
+
+	static char digit_matrix[451] = "011101000110001100011000110001100011000101110000110000100001000010000100001000010000100001011101000100001000010111010000100001000011111011101000100001000010111000001000011000101110100011000110001100011111100001000010000100001111111000010000100001111000001000010000111110011101000110000100001111010001100011000101110111111000100001000010001000100010000100001000011101000110001100010111010001100011000101110011101000110001100010111100001000010000101110";
+	static char w_deys_matrix[246] = "11101111010100111010010101001110111111010110101011010111101010110101011110111101001011100101010010111001011101111000101100011110001001110100101011110100101110010001001000100101110111101001010100101010010101001011101111000100100011110001011110111";
+	static char m_deys_matrix[281] = "1111100110011001100110011111001100010001000100010001000111110001000111111000100011111111000100010111000100011111100110011001111100010001000111111000100011110001000111111111100010001111100110011111111110010001001001000100010011111001100111111001100111111111100110011111000100011111";
+	static char dots_matrix[91] = "000000000000100000000000000000001000000000000000000000000000001000000000100000000000000000";
+
+	static int dc = 0;
 
 void LoadSaveSettings(BOOL do_save)
 {
@@ -219,15 +231,14 @@ void draw_symbol(HDC *hdc, RECT &l_rc, unsigned int m, int *x, int *y, COLORREF 
 		bm_x = 0;
 		caunter = 0;
 	}
-
-	BitBlt(*hdc, *x, *y, rect.right, rect.bottom, hDCMem, 0, 0, SRCCOPY);
+	BitBlt(*hdc, (*x) + l_rc.left, (*y) + l_rc.top, rect.right, rect.bottom, hDCMem, 0, 0, SRCCOPY);
 
 	SelectObject(*hdc, hTmp);
 	DeleteObject(hBmp);
 	DeleteDC(hDCMem);
 }
 
-void draw_second_circle(HDC *hdc, int m)
+void draw_second_circle(HDC *hdc, int m, RECT &l_rc)
 {
 	double xdr, ydr;
 
@@ -248,7 +259,7 @@ void draw_second_circle(HDC *hdc, int m)
 			dcolor = cs_color;
 		}
 
-		draw_dot(hdc, (int)xdr, (int)ydr, &dcolor);
+		draw_dot(hdc, (int)xdr + l_rc.left, (int)ydr + l_rc.top, &dcolor);
 
 		if (count % 5 == 0)
 		{
@@ -264,7 +275,57 @@ void draw_second_circle(HDC *hdc, int m)
 	} while (count <= m);
 }
 
+BOOL CALLBACK MyPaintEnumProc(
+          HMONITOR hMonitor,  // handle to display monitor
+      HDC hdc,     // handle to monitor DC
+      LPRECT lprcMonitor, // monitor intersection rectangle
+      LPARAM data       // data
+      )
+{
+    RECT rc = *lprcMonitor;
 
+
+    // you have the rect which has coordinates of the monitor
+			if (!st.wSecond || g_start_flag || fChildPreview)
+			{
+				g_clear_flag = TRUE;
+
+				draw_symbol(&hdc, rc, st.wHour / 10, &x_h_d1, &y_pos, &hr_color, digit_matrix);
+				draw_symbol(&hdc, rc, st.wHour % 10, &x_h_d2, &y_pos, &hr_color, digit_matrix);
+
+				draw_symbol(&hdc, rc, st.wMinute / 10, &x_m_d1, &y_pos, &mn_color, digit_matrix);
+				draw_symbol(&hdc, rc, st.wMinute % 10, &x_m_d2, &y_pos, &mn_color, digit_matrix);
+
+				if (show_date)
+				{
+					draw_symbol(&hdc, rc, st.wDayOfWeek, &x_wday, &ywd_pos, &wd_color, w_deys_matrix, 7, 5);
+					draw_symbol(&hdc, rc, st.wDay / 10, &x_mday1, &ywd_pos, &md_color, m_deys_matrix, 4, 7);
+					draw_symbol(&hdc, rc, st.wDay % 10, &x_mday2, &ywd_pos, &md_color, m_deys_matrix, 4, 7);
+				}
+			}
+			if (digit_second)
+			{
+				draw_symbol(&hdc, rc, st.wSecond / 10, &x_s_d1, &y_pos, &sc_color, digit_matrix);
+				draw_symbol(&hdc, rc, st.wSecond % 10, &x_s_d2, &y_pos, &sc_color, digit_matrix);
+			}
+
+			if (dot_blink)
+			{
+				dc = st.wSecond % 2;
+			}
+			draw_symbol(&hdc, rc, dc, &x_dot1, &y_pos, &d1_color, dots_matrix);
+			if (digit_second)
+			{
+				draw_symbol(&hdc, rc, dc, &x_dot2, &y_pos, &d2_color, dots_matrix);
+			}
+
+			if (circle_second)
+			{
+				draw_second_circle(&hdc, st.wSecond, rc);
+			}
+    // Draw here now
+    return 1;
+}
 //Required Function
 LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -281,17 +342,7 @@ LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	static RECT         rc;       // RECT structure  
 	static UINT         uTimer;   // timer identifier
 
-	static SYSTEMTIME st;
 
-	static int w_w, w_h, d_ch_width, d_ch_height;
-	static int y_pos, ywd_pos, x_h_d1, x_h_d2, x_m_d1, x_m_d2, x_s_d1, x_s_d2, x_dot1, x_dot2, x_wday, x_mday1, x_mday2;
-
-	static char digit_matrix[451] = "011101000110001100011000110001100011000101110000110000100001000010000100001000010000100001011101000100001000010111010000100001000011111011101000100001000010111000001000011000101110100011000110001100011111100001000010000100001111111000010000100001111000001000010000111110011101000110000100001111010001100011000101110111111000100001000010001000100010000100001000011101000110001100010111010001100011000101110011101000110001100010111100001000010000101110";
-	static char w_deys_matrix[246] = "11101111010100111010010101001110111111010110101011010111101010110101011110111101001011100101010010111001011101111000101100011110001001110100101011110100101110010001001000100101110111101001010100101010010101001011101111000100100011110001011110111";
-	static char m_deys_matrix[281] = "1111100110011001100110011111001100010001000100010001000111110001000111111000100011111111000100010111000100011111100110011001111100010001000111111000100011110001000111111111100010001111100110011111111110010001001001000100010011111001100111111001100111111111100110011111000100011111";
-	static char dots_matrix[91] = "000000000000100000000000000000001000000000000000000000000000001000000000100000000000000000";
-
-	static int dc = 0;
 
 	static PAINTSTRUCT ps;
 
@@ -305,11 +356,11 @@ LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
 		LoadSaveSettings(FALSE);
 
-//		GetClientRect(hWnd, &rc);
+		GetClientRect(hWnd, &rc);
 
-//		GetWindowRect(hWnd, &rc);
-//		w_w = rc.right;
-//		w_h = rc.bottom;
+		//GetWindowRect(hWnd, &rc);
+		//w_w = rc.right;
+		//w_h = rc.bottom;
 
 
 		w_w = GetSystemMetrics(SM_CXSCREEN);
@@ -392,49 +443,9 @@ LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 		case WM_PAINT:
 
 			hdc = BeginPaint(hWnd, &ps);
-
 			GetLocalTime(&st);
-
-			if (!st.wSecond || g_start_flag || fChildPreview)
-			{
-				g_clear_flag = TRUE;
-
-				draw_symbol(&hdc, rc, st.wHour / 10, &x_h_d1, &y_pos, &hr_color, digit_matrix);
-				draw_symbol(&hdc, rc, st.wHour % 10, &x_h_d2, &y_pos, &hr_color, digit_matrix);
-
-				draw_symbol(&hdc, rc, st.wMinute / 10, &x_m_d1, &y_pos, &mn_color, digit_matrix);
-				draw_symbol(&hdc, rc, st.wMinute % 10, &x_m_d2, &y_pos, &mn_color, digit_matrix);
-
-				if (show_date)
-				{
-					draw_symbol(&hdc, rc, st.wDayOfWeek, &x_wday, &ywd_pos, &wd_color, w_deys_matrix, 7, 5);
-					draw_symbol(&hdc, rc, st.wDay / 10, &x_mday1, &ywd_pos, &md_color, m_deys_matrix, 4, 7);
-					draw_symbol(&hdc, rc, st.wDay % 10, &x_mday2, &ywd_pos, &md_color, m_deys_matrix, 4, 7);
-				}
-			}
-			if (digit_second)
-			{
-				draw_symbol(&hdc, rc, st.wSecond / 10, &x_s_d1, &y_pos, &sc_color, digit_matrix);
-				draw_symbol(&hdc, rc, st.wSecond % 10, &x_s_d2, &y_pos, &sc_color, digit_matrix);
-			}
-
-			if (dot_blink)
-			{
-				dc = st.wSecond % 2;
-			}
-			draw_symbol(&hdc, rc, dc, &x_dot1, &y_pos, &d1_color, dots_matrix);
-			if (digit_second)
-			{
-				draw_symbol(&hdc, rc, dc, &x_dot2, &y_pos, &d2_color, dots_matrix);
-			}
-
-			if (circle_second)
-			{
-				draw_second_circle(&hdc, st.wSecond);
-			}
-
+			EnumDisplayMonitors(hdc,NULL, MyPaintEnumProc, 0);
 			g_start_flag = FALSE;
-
 			EndPaint(hWnd, &ps);
 
 		break;

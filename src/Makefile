@@ -1,10 +1,10 @@
 
-VER=0.4
+VER=0.5
 
 GCC=g++
 RC=windres
 EXE=build-${VER}.scr
-LDFLAGS=-s -O2 -static  -mwindows -lgdiplus -lcomctl32  -lcomdlg32 -lscrnsave -static-libgcc -static-libstdc++
+LDFLAGS=-s -O2 -static -mwindows -lgdiplus -lcomctl32  -lcomdlg32 -lscrnsave -static-libgcc -static-libstdc++
 CXXFLAGS=-O2 -Wl,-rpath
 OBJS=source.o resource.res
 

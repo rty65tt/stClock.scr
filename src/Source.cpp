@@ -227,7 +227,7 @@ void draw_symbol(HDC *hdc, RECT &l_rc, unsigned int m, int *x, int *y, COLORREF 
 
     hbrushOld = SelectObject(hDCMem, bgbrush);
 
-    //FillRect(hDCMem, &rect, bgbrush);
+    FillRect(hDCMem, &rect, bgbrush);
 
     SelectObject(hDCMem, hbrushOld);
     DeleteObject(bgbrush);

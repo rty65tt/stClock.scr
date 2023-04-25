@@ -1,5 +1,5 @@
 
-VER=0.5
+VER=0.6
 
 GCC=g++
 RC=windres

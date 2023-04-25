@@ -48,8 +48,6 @@ static int digit_second = 1;
 static int circle_second = 1;
 static int show_date = 1;
 
-static int monnum = 1;
-
 void LoadSaveSettings(BOOL do_save);
 
 void set_grey_theme()
@@ -196,6 +194,39 @@ void draw_dot(HDC *hdc, int x, int y, DMONPRM dp, COLORREF *c)
     }
 }
 
+void draw_bg(HDC *hdc, DMONPRM *dp, int cn, int iter, int grey, int red, int green, int blue)
+{
+    COLORREF r_color;
+    int rnd_color, rndx, rndy;
+    int nx = (dp->xh / dp->b_step) * 2;
+    int ny = (dp->yh / dp->b_step) * 2;
+    int sx = dp->xh - (nx / 2 * dp->b_step);
+    int sy = dp->yh - (ny / 2 * dp->b_step);
+
+    Graphics g(*hdc);
+    ::Color p, b;
+    if (antialias)
+    {
+        g.SetSmoothingMode(SmoothingModeAntiAlias);
+    }
+    p.SetFromCOLORREF(bg_color);
+
+    for(int i=0; i < cn; i++) {
+        rnd_color = rand()%30;
+        r_color = RGB(rnd_color+red, rnd_color+green, rnd_color+blue);
+        b.SetFromCOLORREF(r_color);
+        ::Pen pen(p, 1);
+        ::SolidBrush brush(b);
+
+        for(int x=0; x < iter; x++){
+            rndx = rand()%nx * dp->b_step;
+            rndy = rand()%ny * dp->b_step;
+            g.FillEllipse(&brush, sx+rndx, sy+rndy, dp->d_size, dp->d_size);
+            g.DrawEllipse(&pen, sx+rndx, sy+rndy, dp->d_size, dp->d_size);
+        }
+    }
+}
+
 void draw_symbol(HDC *hdc, RECT &l_rc, unsigned int m, int *x, int *y, COLORREF *d_color, DMONPRM *dp, char *p_matrix, int cel = 5, int row = 9)
 {
 
@@ -206,12 +237,14 @@ void draw_symbol(HDC *hdc, RECT &l_rc, unsigned int m, int *x, int *y, COLORREF 
 
     if (g_clear_flag)       // Draw Background
     {
-        hbrushOld = SelectObject(*hdc, bgbrush);
-        FillRect(*hdc, &l_rc, bgbrush);
-        SelectObject(*hdc, hbrushOld);
+        //hbrushOld = SelectObject(*hdc, bgbrush);
+        //FillRect(*hdc, &l_rc, bgbrush);
+        //SelectObject(*hdc, hbrushOld);
+        draw_bg(hdc, dp, 16, 16, 0, 30, 20, 00);
         g_clear_flag = FALSE;
     }
 
+    //draw_bg(hdc, dp, 1, 2, 0, 0, 0, 0);
 
     HDC hDCMem = CreateCompatibleDC(*hdc);
 
@@ -227,7 +260,7 @@ void draw_symbol(HDC *hdc, RECT &l_rc, unsigned int m, int *x, int *y, COLORREF 
 
     hbrushOld = SelectObject(hDCMem, bgbrush);
 
-    FillRect(hDCMem, &rect, bgbrush);
+    //FillRect(hDCMem, &rect, bgbrush);
 
     SelectObject(hDCMem, hbrushOld);
     DeleteObject(bgbrush);
@@ -343,29 +376,31 @@ BOOL CALLBACK MyPaintEnumProc(
 
     dp.d_radius = dp.d_size / 2;
 
-    dp.b_step = dp.d_size + dp.d_size / 5;
+    dp.b_step = dp.d_size + dp.d_size / 4;
+
+    draw_bg(&hdc, &dp, 1, 2, 0, 0, 0, 0);
 
     dp.d_ch_width = dp.b_step * 5;
     dp.d_ch_height = dp.b_step * 9;
 
     if (show_date)
     {
-        dp.y_pos = dp.yh - dp.d_ch_height / 2 - dp.b_step * 3;
+        dp.y_pos = dp.yh - dp.b_step * 8;
         dp.ywd_pos = dp.b_step * 11 + dp.y_pos;
     } else {
-        dp.y_pos = dp.yh - dp.d_ch_height / 2;
+        dp.y_pos = dp.yh - dp.b_step -6;
     }
 
     if (digit_second)
     {
-        crd.x_h_d1 = dp.xh - dp.d_ch_width * 4 - dp.d_size * 3;
-        crd.x_h_d2 = crd.x_h_d1 + dp.d_ch_width + dp.d_size * 2;
+        crd.x_h_d1 = dp.xh - dp.d_ch_width * 4 - dp.b_step * 3;
+        crd.x_h_d2 = crd.x_h_d1 + dp.b_step * 7;
         crd.x_dot1 = crd.x_h_d2 + dp.d_ch_width;
         crd.x_m_d1 = crd.x_dot1 + dp.d_ch_width;
-        crd.x_m_d2 = dp.xh + dp.d_size;
+        crd.x_m_d2 = dp.xh + dp.b_step;
         crd.x_dot2 = crd.x_m_d2 + dp.d_ch_width;
         crd.x_s_d1 = crd.x_dot2 + dp.d_ch_width;
-        crd.x_s_d2 = crd.x_s_d1 + dp.d_ch_width + dp.d_size * 2;
+        crd.x_s_d2 = crd.x_s_d1 + dp.d_ch_width + dp.b_step * 2;
         crd.x_wday = crd.x_h_d2;
     }
     else
@@ -452,7 +487,7 @@ LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
             //int monnum = GetSystemMetrics (SM_CMONITORS);
 
-            uTimer = SetTimer(hWnd, TIMER, 1000, NULL);
+            uTimer = SetTimer(hWnd, TIMER, 100, NULL);
 
             break;
 

@@ -1,9 +1,9 @@
 #include <windows.h>
-#include <winuser.h>
-#include "wtypes.h"
-#include <math.h>
-#include "commdlg.h"
-#include <CommCtrl.h>
+//#include <winuser.h>
+//#include "wtypes.h"
+//#include <math.h>
+//#include "commdlg.h"
+//#include <CommCtrl.h>
 #include <scrnsave.h>
 //#include <Wingdi.h>
 #include <gdiplus.h>
@@ -12,8 +12,8 @@
 
 #include "resource.h"
 
-#pragma comment (lib, "Comdlg32.lib")
-#pragma comment (lib, "comctl32.lib")
+//#pragma comment (lib, "Comdlg32.lib")
+//#pragma comment (lib, "comctl32.lib")
 //#pragma comment (lib, "scrnsavw.lib")
 #pragma comment (lib, "Scrnsave.lib")
 //#pragma comment (lib, "Gdi32.lib")

@@ -9,13 +9,8 @@
 
 1729459576 f:\dev\projects\stclock.scr\src\resource.h
 
-1729461681 source:f:\dev\projects\stclock.scr\src\source.cpp
+1729469221 source:f:\dev\projects\stclock.scr\src\source.cpp
 	<windows.h>
-	<winuser.h>
-	"wtypes.h"
-	<math.h>
-	"commdlg.h"
-	<CommCtrl.h>
 	<scrnsave.h>
 	<gdiplus.h>
 	"resource.h"

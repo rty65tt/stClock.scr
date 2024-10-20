@@ -24,8 +24,8 @@ using namespace Gdiplus;
 
 #define PI       3.14159265358979323846   // pi
 #define TIMER   1
-extern HINSTANCE    hMainInstance;      // screen saver instance handle  
-extern BOOL         fChildPreview;   
+extern HINSTANCE    hMainInstance;      // screen saver instance handle
+extern BOOL         fChildPreview;
 
 static bool g_start_flag = TRUE;
 static bool g_clear_flag = TRUE;
@@ -172,7 +172,7 @@ void LoadSaveSettings(BOOL do_save)
 
 void draw_dot(HDC *hdc, int x, int y, DMONPRM dp, COLORREF *c)
 {
-    
+
     if (fChildPreview) {
         SetPixelV(*hdc, x, y, *c);
     }
@@ -185,7 +185,7 @@ void draw_dot(HDC *hdc, int x, int y, DMONPRM dp, COLORREF *c)
         {
             g.SetSmoothingMode(SmoothingModeAntiAlias);
         }
-        
+
         ::Pen pen(p, 1);
         ::SolidBrush brush(b);
 
@@ -212,7 +212,7 @@ void draw_bg(HDC *hdc, DMONPRM *dp, int cn, int iter, int grey, int red, int gre
     p.SetFromCOLORREF(bg_color);
 
     for(int i=0; i < cn; i++) {
-        rnd_color = rand()%30;
+        rnd_color = rand()%15;
         r_color = RGB(rnd_color+red, rnd_color+green, rnd_color+blue);
         b.SetFromCOLORREF(r_color);
         ::Pen pen(p, 1);
@@ -225,6 +225,7 @@ void draw_bg(HDC *hdc, DMONPRM *dp, int cn, int iter, int grey, int red, int gre
             g.DrawEllipse(&pen, sx+rndx, sy+rndy, dp->d_size, dp->d_size);
         }
     }
+
 }
 
 void draw_symbol(HDC *hdc, RECT &l_rc, unsigned int m, int *x, int *y, COLORREF *d_color, DMONPRM *dp, char *p_matrix, int cel = 5, int row = 9)
@@ -240,7 +241,7 @@ void draw_symbol(HDC *hdc, RECT &l_rc, unsigned int m, int *x, int *y, COLORREF 
         //hbrushOld = SelectObject(*hdc, bgbrush);
         //FillRect(*hdc, &l_rc, bgbrush);
         //SelectObject(*hdc, hbrushOld);
-        draw_bg(hdc, dp, 16, 16, 0, 30, 20, 00);
+        draw_bg(hdc, dp, 16, 16, 0, 10, 10, 10);
         g_clear_flag = FALSE;
     }
 
@@ -313,7 +314,7 @@ void draw_second_circle(HDC *hdc, int m, DMONPRM *dp, RECT &l_rc)
         ydr = dp->yh + (dp->wr * sin(r)) - dp->d_radius;
 
         COLORREF dcolor = cf_color;
-        if (count % 5) 
+        if (count % 5)
         {
             dcolor = cs_color;
         }
@@ -470,8 +471,8 @@ LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     ULONG_PTR gdiplusToken;
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
-    static HDC          hdc;      // device-context handle  
-    static RECT         rc;       // RECT structure  
+    static HDC          hdc;      // device-context handle
+    static RECT         rc;       // RECT structure
     static UINT         uTimer;   // timer identifier
 
     static PAINTSTRUCT ps;
@@ -519,7 +520,7 @@ LRESULT WINAPI ScreenSaverProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         default:
             return DefScreenSaverProc(hWnd, message, wParam, lParam);
     }
-    
+
     GdiplusShutdown(gdiplusToken);
     return 0;
 }
@@ -549,7 +550,7 @@ COLORREF SelectColor(HWND parent, COLORREF clr) {
 //Required Function
 BOOL WINAPI ScreenSaverConfigureDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static HWND hCheckbox, previewer;
+    static HWND hCheckbox;
     static COLORREF selectcolor;
     static RECT         rc;
 
@@ -561,9 +562,9 @@ BOOL WINAPI ScreenSaverConfigureDialog(HWND hDlg, UINT message, WPARAM wParam, L
 
         set_grey_theme();
 
-        // Load Settings  from Registry 
+        // Load Settings  from Registry
         LoadSaveSettings(FALSE);
-        
+
         hCheckbox = GetDlgItem(hDlg, IDC_SHOWSECONDS);
         SendMessage(hCheckbox, BM_SETCHECK, digit_second, 0);
         hCheckbox = GetDlgItem(hDlg, IDC_SHOWSECONDCICRCLE);
